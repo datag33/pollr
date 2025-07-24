@@ -1,0 +1,25 @@
+Package: pollr
+Title: Data analysis of survey questions
+Version: 0.0.0.9000
+Authors@R: 
+    person("Antoine", "Girard", , "antoine.girard@datag.fr", role = c("aut", "cre"))
+Description: Provides functions to analyze and visualize responses to survey questions. Supports single-choice, multiple-choice and sub-questions formats, with or without weighting. Generate three types of output : a tidy summary table, a styled HTML table and an interactive plot.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports:
+    dplyr,
+    tidyr,
+    forcats,
+    ggplot2,
+    ggiraph,
+    kableExtra,
+    srvyr,
+    glue
+Depends:
+    R (>= 4.0.0)
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
