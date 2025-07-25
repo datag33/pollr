@@ -4,7 +4,14 @@
 \alias{pollr_analyse}
 \title{Analyze a survey question and return summary data, table and interactive plot}
 \usage{
-pollr_analyse(survey_data, question_varname, weight_varname = NULL)
+pollr_analyse(
+  survey_data,
+  question_varname,
+  weight_varname = NULL,
+  cross_varname = NULL,
+  question_text = "",
+  sorted_results = FALSE
+)
 }
 \arguments{
 \item{survey_data}{A dataframe with survey data}
@@ -12,11 +19,20 @@ pollr_analyse(survey_data, question_varname, weight_varname = NULL)
 \item{question_varname}{A character string, the variable name to analyze}
 
 \item{weight_varname}{A character string, the variable name for weights (optional)}
+
+\item{cross_varname}{A character string, the variable name for cross-tabulation (optional)}
+
+\item{question_text}{A character string, the text of the question (optional)}
+
+\item{sorted_results}{A boolean indicating whether to sort the results (default is FALSE)}
 }
 \value{
-A list with three elements:
+A list with six elements:
 \describe{
+\item{info}{A list with all informations about the question}
 \item{data}{A tibble of data question}
+\item{data}{A survey design of data question}
+\item{info}{A list with all informations about the question}
 \item{results}{A tibble of data question results}
 \item{table}{An HTML table of the data question results}
 \item{plot}{An interactive plot of the data question results}
