@@ -3,11 +3,17 @@
 #' @param survey_data A data.frame containing the survey data
 #' @param question_varname A single character string, the name of the question variable
 #' @param weight_varname A single character string, the name of the weight variable (optional)
+#' @param cross_varname A character string, the variable name for cross-tabulation (optional)
+#' @param question_title A single character string, the title of the question (optional)
+#' @param question_text A single character string, the text of the question (optional)
+#' @param sorted_results A single boolean value indicating whether to sort the results (default is FALSE)
+#'
+
 #' @importFrom glue glue
 #' @noRd
 
 check_pollr_analyze_inputs <- function(survey_data, question_varname,  weight_varname, cross_varname,
-                                       question_text,
+                                       question_title, question_text,
                                        sorted_results) {
 
   #------------------check main arguments ------------------
@@ -44,6 +50,7 @@ check_pollr_analyze_inputs <- function(survey_data, question_varname,  weight_va
   if (!is.null(weight_varname) && !is.numeric(survey_data[[weight_varname]])) {
     stop(glue::glue("Variable `{weight_varname}` must be numeric."), call. = FALSE)
   }
+
   # Check if the weight_varname has no missing values if provided
   if (!is.null(weight_varname) && any(is.na(survey_data[[weight_varname]]))) {
     stop(glue::glue("Variable `{weight_varname}` must not have missing values."), call. = FALSE)
@@ -65,7 +72,14 @@ check_pollr_analyze_inputs <- function(survey_data, question_varname,  weight_va
 
   }
 
-  #------------------check  question_text------------------
+  #------------------check  question_text and question_title------------------
+
+
+  # Check if question_title is a single string, if provided
+  if (!is.null(question_title) && (!is.character(question_title) || length(question_title) != 1)) {
+    stop("`question_title` must be a single character string", call. = FALSE)
+  }
+
 
   # Check if question_text is a single string, if provided
   if (!is.null(question_text) && (!is.character(question_text) || length(question_text) != 1)) {

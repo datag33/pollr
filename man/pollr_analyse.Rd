@@ -9,6 +9,7 @@ pollr_analyse(
   question_varname,
   weight_varname = NULL,
   cross_varname = NULL,
+  question_title = "",
   question_text = "",
   sorted_results = FALSE
 )
@@ -22,7 +23,9 @@ pollr_analyse(
 
 \item{cross_varname}{A character string, the variable name for cross-tabulation (optional)}
 
-\item{question_text}{A character string, the text of the question (optional)}
+\item{question_title}{A character string, the main title of the question (optional)}
+
+\item{question_text}{A character string, the detailled text of the question (optional)}
 
 \item{sorted_results}{A boolean indicating whether to sort the results (default is FALSE)}
 }
@@ -31,7 +34,7 @@ A list with six elements:
 \describe{
 \item{info}{A list with all informations about the question}
 \item{data}{A tibble of data question}
-\item{data}{A survey design of data question}
+\item{design}{A survey design of data question}
 \item{info}{A list with all informations about the question}
 \item{results}{A tibble of data question results}
 \item{table}{An HTML table of the data question results}

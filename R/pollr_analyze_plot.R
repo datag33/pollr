@@ -10,14 +10,24 @@
 #'
 pollr_analyze_plot <- function(question_results, question_info) {
 
+  # Prepare tooltip
   question_results <- question_results |>
-    mutate(tooltip = paste0(response, ": ", prop, "%"))
+    mutate(
+      tooltip = glue("{response} ({cross}) : <b>{prop} % </b> \n <i>n = {n}</i>")
+     # tooltip = if_else(grep("Total", cross) >= 1, glue("{tooltip} , tooltip)
+      )
 
-  question_plot <- ggplot(question_results, aes(x = fct_reorder(response, n), y = n)) +
+
+
+  question_plot <- ggplot(question_results, aes(x = prop, y = fct_reorder(response, n))) +
     geom_col_interactive(aes(tooltip = tooltip), fill = "#2c7fb8") +
-    coord_flip() +
-    labs(x = NULL, y = "n") +
-    theme_minimal()
+    theme_minimal() +
+    labs(
+      title = question_info$question_title,
+      subtitle = question_info$question_text,
+      x = "%",
+      y = ""
+    )
 
   # Facet by cross variable if it exists
   if (!is.null(question_info$cross_varname)) {
