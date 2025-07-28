@@ -25,21 +25,22 @@ pollr_analyze_tab_numerical<- function(question_results, question_info) {
 
     nb_cross <- unique(question_tab$cross) |> length()
     question_tab <- question_tab |>
-      pivot_wider(names_from = cross, values_from = c(n, mean, sd, ci_interval), names_vary = "slowest")
+      pivot_wider(names_from = cross, values_from = c(n, mean, median, sd, ci_interval), names_vary = "slowest")
 
   } else {
     nb_cross <-  1
     question_tab <- question_tab |> ungroup() |> select(-cross) # Remove cross variable if not used
   }
 
-  # Define the column numbers for n, prop and ci_interval
-  col_number_n <- seq(1, ncol(question_tab), by = 4)
-  col_number_mean <- seq(2, ncol(question_tab), by = 4)
-  col_number_sd <- seq(3, ncol(question_tab), by = 4)
-  col_number_ci <- seq(4, ncol(question_tab), by = 4)
+  # Define the column numbers for n, mean, median, sd and ci
+  col_number_n <- seq(1, ncol(question_tab), by = 5)
+  col_number_mean <- seq(2, ncol(question_tab), by = 5)
+  col_number_median <- seq(3, ncol(question_tab), by = 5)
+  col_number_sd <- seq(4, ncol(question_tab), by = 5)
+  col_number_ci <- seq(5, ncol(question_tab), by = 5)
 
   # Define the column names
-  col_names <- c(rep(c("n", "mean", "sd","CI"), nb_cross))
+  col_names <- c(rep(c("n", "mean", "median", "sd","CI"), nb_cross))
 
 
   # Create the HTML table
@@ -52,7 +53,8 @@ pollr_analyze_tab_numerical<- function(question_results, question_info) {
     ) |>
     kable_minimal(full_width = F, position = "left") |>
     column_spec(col_number_n , italic = TRUE, extra_css = "font-size: 90%;") |>  #  Format n column(s)
-    column_spec(col_number_mean,  bold = TRUE) |>    # Format prop column(s)
+    column_spec(col_number_mean,  bold = TRUE) |>    # Format mean column(s)
+    column_spec(col_number_median) |>    # Format median column(s)
     column_spec(col_number_sd, italic = TRUE, extra_css = "font-size: 80%;") |>  # Format sd column(s)
     column_spec(col_number_ci,color = "gray40", extra_css = "font-size: 80%;")   # Format ci column
 
@@ -61,7 +63,7 @@ pollr_analyze_tab_numerical<- function(question_results, question_info) {
 
   if (!is.null(question_info$cross_varname)) {
 
-    header_group <- c(rep(4, nb_cross))
+    header_group <- c(rep(5, nb_cross))
     names(header_group) <- c(unique(question_results$cross))
 
     question_tab <- question_tab  |>

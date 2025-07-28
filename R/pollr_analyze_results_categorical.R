@@ -1,4 +1,4 @@
-#' Compute results for a single question with categorial data, using survey design
+#' Compute results for a single question with categorial data (multiple choice or not), using survey design
 #'
 #' @param question_design A survey design object
 #' @param question_info A list with all informations about the question
@@ -12,11 +12,12 @@ pollr_analyze_results_categorical <- function(question_design, question_info) {
 
 
   results <- question_design |>
-    group_by(cross, response) |>
+    group_by(subquestion,cross, response) |>
     summarize(
-      n = survey_total(),
-      prop = survey_mean(vartype = "ci", level = 0.95, proportion = TRUE),
+      n = survey_total(), # Count
+      prop = survey_mean(vartype = "ci", level = 0.95, proportion = TRUE), # Proportion
     ) |>
+    ungroup() |>
     select(-n_se) |>
     rename(
       ci_low = prop_low,
@@ -25,7 +26,8 @@ pollr_analyze_results_categorical <- function(question_design, question_info) {
     mutate(
       n = round(n), # Round all counts
       across(c(prop, ci_low, ci_high), ~ round(100 * ., 1)) # Round with 1 decimal proportions and CI levels
-    )
+    ) |>
+    filter(!is.na(response)) # Remove NA
 
   # If sorted results, then reorder the response factor depending on total counts
   if (question_info$sorted_results) {
@@ -34,7 +36,8 @@ pollr_analyze_results_categorical <- function(question_design, question_info) {
       group_by(response) |>
       summarize(n = sum(n)) |>
       arrange(desc(n)) |>
-      pull(response)
+      pull(response) |>
+      as.character()
 
     results <-  results |>
       mutate(
@@ -45,6 +48,11 @@ pollr_analyze_results_categorical <- function(question_design, question_info) {
   # Sort the results using response factor
   results <-  results |>
     arrange(cross, response)
+
+
+  # Remove subquestion variable
+  results <-  results |>
+    select(-subquestion)
 
 
   return(results)

@@ -4,6 +4,7 @@
 #' @param question_varname A character string, the variable name to analyze
 #' @param weight_varname A character string, the variable name for weights (optional)
 #' @param cross_varname A character string, the variable name for cross-tabulation (optional)
+#' @param multiple_choice A boolean indicating whether the question is multiple choice (default is FALSE)
 #' @param question_title A character string, the main title of the question (optional)
 #' @param question_text A character string, the detailled text of the question (optional)
 #' @param sorted_results A boolean indicating whether to sort the results (default is FALSE)
@@ -22,13 +23,14 @@
 #' @export
 #'
 pollr_analyse <- function(survey_data,
-                          question_varname, weight_varname = NULL, cross_varname = NULL,
+                          question_varname,  multiple_choice = FALSE,
+                          weight_varname = NULL, cross_varname = NULL,
                           question_title = "", question_text = "",
                           sorted_results = FALSE) {
 
-  check_pollr_analyze_inputs(survey_data, question_varname, weight_varname, cross_varname,  question_title, question_text, sorted_results)
+  check_pollr_analyze_inputs(survey_data, question_varname, multiple_choice, weight_varname, cross_varname ,question_title, question_text, sorted_results)
 
-  question_info <- pollr_analyze_info(survey_data, question_varname, weight_varname, cross_varname, question_title, question_text, sorted_results)
+  question_info <- pollr_analyze_info(survey_data, question_varname, multiple_choice, weight_varname, cross_varname, question_title, question_text, sorted_results)
 
   question_data <- pollr_analyze_data(survey_data, question_info)
   question_design <- pollr_analyze_design(question_data)

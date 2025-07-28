@@ -4,15 +4,16 @@
 #' @param question_varname A single character string, the name of the question variable
 #' @param weight_varname A single character string, the name of the weight variable (optional)
 #' @param cross_varname A character string, the variable name for cross-tabulation (optional)
+#' @param multiple_choice A boolean indicating whether the question is multiple choice (default is FALSE)
 #' @param question_title A single character string, the title of the question (optional)
 #' @param question_text A single character string, the text of the question (optional)
 #' @param sorted_results A single boolean value indicating whether to sort the results (default is FALSE)
 #'
-
-#' @importFrom glue glue
 #' @noRd
 
-check_pollr_analyze_inputs <- function(survey_data, question_varname,  weight_varname, cross_varname,
+check_pollr_analyze_inputs <- function(survey_data, question_varname,
+                                       multiple_choice,
+                                       weight_varname, cross_varname,
                                        question_title, question_text,
                                        sorted_results) {
 
@@ -23,16 +24,51 @@ check_pollr_analyze_inputs <- function(survey_data, question_varname,  weight_va
     stop("`survey_data` must be a data.frame", call. = FALSE)
   }
 
-  # Check if the question_varname is a single character string
-  if (!is.character(question_varname) || length(question_varname) != 1) {
-    stop("`question_varname` must be a single character string", call. = FALSE)
+  # Check multiple choice is a single boolean value
+  if (!is.logical(multiple_choice) || length(multiple_choice) != 1) {
+    stop("`multiple_choice` must be a single boolean value", call. = FALSE)
   }
 
-  # Check if the question_varname exists in the survey_data
-  if (!question_varname %in% names(survey_data)) {
-    stop(glue::glue("Variable `{question_varname}` not found in `survey_data`."), call. = FALSE)
+
+  #------------------check question_varname, if no multiple choice ------------------
+
+  if (!multiple_choice) {
+
+      # If no multiple choice, check if the question_varname is a single character string
+      if (!is.character(question_varname) || length(question_varname) != 1) {
+        stop("`question_varname` must be a single character string", call. = FALSE)
+      }
+
+      # If no multiple choice, check if the question_varname exists in the survey_data
+      if (!question_varname %in% names(survey_data)) {
+        stop(glue::glue("Variable `{question_varname}` not found in `survey_data`."), call. = FALSE)
+      }
+
   }
 
+  #------------------check question_varname, if multiple choices------------------
+
+  if (multiple_choice) {
+
+
+    # If multichoice, check question_varname must a vector of character strings
+    if (length(question_varname) <=1 || !is.character(question_varname)) {
+      stop(glue::glue("Variable `{question_varname}` must be a vector of character strings when `multiple_choice` is TRUE."), call. = FALSE)
+    }
+
+    # If multichoice, check all question_varname variables exist in the survey_data
+    if ( !all(question_varname %in% names(survey_data))) {
+      stop(glue::glue("Variable `{question_varname}` not found in `survey_data`."), call. = FALSE)
+    }
+
+    # If multichoice, check all question_varname variables in survey_data must be a vector of character or factor
+    if( !all(sapply(question_varname, function(var) is.character(survey_data[[var]]) || is.factor(survey_data[[var]])))) {
+      stop(glue::glue("Variables `{question_varname}` in `survey_data` must be vectors of character or factor when `multiple_choice` is TRUE."), call. = FALSE)
+    }
+
+
+
+  }
 
   #------------------check weight_varname------------------
 
@@ -71,6 +107,10 @@ check_pollr_analyze_inputs <- function(survey_data, question_varname,  weight_va
     }
 
   }
+
+
+
+
 
   #------------------check  question_text and question_title------------------
 

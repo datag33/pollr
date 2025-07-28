@@ -22,7 +22,8 @@ pollr_analyze_tab_categorical <- function(question_results, question_info) {
 
     nb_cross <- unique(question_tab$cross) |> length()
     question_tab <- question_tab |>
-      pivot_wider(names_from = cross, values_from = c(n, prop, ci_interval), names_vary = "slowest")
+      pivot_wider(names_from = cross, values_from = c(n, prop, ci_interval), names_vary = "slowest") |>
+      ungroup()
 
   } else {
     nb_cross <-  1

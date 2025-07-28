@@ -4,7 +4,7 @@
 #' @param question_info A list with all informations about the question
 #'
 #' @return A tibble with question results
-#' @importFrom srvyr survey_mean survey_total survey_sd
+#' @importFrom srvyr survey_mean survey_total survey_sd survey_median
 #' @noRd
 #'
 #'
@@ -16,16 +16,17 @@ pollr_analyze_results_numerical <- function(question_design, question_info) {
     summarize(
       n = survey_total(),
       mean = survey_mean(response, vartype = "ci", level = 0.95),
+      median= survey_median(response, level = 0.95),
       sd = survey_sd(response)
     ) |>
-    select(-n_se) |>
+    select(-n_se, -median_se) |>
     rename(
       ci_low = mean_low,
       ci_high = mean_upp
     ) |>
     mutate(
       n = round(n), # Round all counts
-      across(c(mean, sd, ci_low, ci_high), ~ round(., 2)) # Round with 2 decimal means and SDs
+      across(c(mean, median, sd, ci_low, ci_high), ~ round(., 2)) # Round with 2 decimal means and SDs
     )
 
   # If sorted results, then reorder the cross factor depending on averages

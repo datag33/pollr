@@ -7,6 +7,7 @@
 pollr_analyse(
   survey_data,
   question_varname,
+  multiple_choice = FALSE,
   weight_varname = NULL,
   cross_varname = NULL,
   question_title = "",
@@ -18,6 +19,8 @@ pollr_analyse(
 \item{survey_data}{A dataframe with survey data}
 
 \item{question_varname}{A character string, the variable name to analyze}
+
+\item{multiple_choice}{A boolean indicating whether the question is multiple choice (default is FALSE)}
 
 \item{weight_varname}{A character string, the variable name for weights (optional)}
 
