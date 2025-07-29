@@ -1,4 +1,4 @@
-#' Generate a HTML table for a categorical question
+#' Generate a HTML table for a single categorical question
 #'
 #' @param question_results tibble with question results
 #' @param question_info A list with all informations about the question

@@ -1,10 +1,11 @@
-#' Check inputs for pollr_analyse
+#' Check inputs for pollr_analyze
 #'
 #' @param survey_data A data.frame containing the survey data
 #' @param question_varname A single character string, the name of the question variable
 #' @param weight_varname A single character string, the name of the weight variable (optional)
 #' @param cross_varname A character string, the variable name for cross-tabulation (optional)
 #' @param multiple_choice A boolean indicating whether the question is multiple choice (default is FALSE)
+#' @param grid A boolean indicating whether the question is a grid question (default is FALSE)
 #' @param question_title A single character string, the title of the question (optional)
 #' @param question_text A single character string, the text of the question (optional)
 #' @param sorted_results A single boolean value indicating whether to sort the results (default is FALSE)
@@ -12,7 +13,7 @@
 #' @noRd
 
 check_pollr_analyze_inputs <- function(survey_data, question_varname,
-                                       multiple_choice,
+                                       multiple_choice, grid,
                                        weight_varname, cross_varname,
                                        question_title, question_text,
                                        sorted_results) {
@@ -30,9 +31,16 @@ check_pollr_analyze_inputs <- function(survey_data, question_varname,
   }
 
 
-  #------------------check question_varname, if no multiple choice ------------------
+  # Check grid is a single boolean value
+  if (!is.logical(grid) || length(grid) != 1) {
+    stop("`grid` must be a single boolean value", call. = FALSE)
+  }
 
-  if (!multiple_choice) {
+
+
+  #------------------check question_varname, if no multiple choice and no grid ------------------
+
+  if (!multiple_choice & !grid) {
 
       # If no multiple choice, check if the question_varname is a single character string
       if (!is.character(question_varname) || length(question_varname) != 1) {
@@ -46,7 +54,7 @@ check_pollr_analyze_inputs <- function(survey_data, question_varname,
 
   }
 
-  #------------------check question_varname, if multiple choices------------------
+  #------------------check question_varname, if multiple choices and no grid------------------
 
   if (multiple_choice) {
 
@@ -66,8 +74,36 @@ check_pollr_analyze_inputs <- function(survey_data, question_varname,
       stop(glue::glue("Variables `{question_varname}` in `survey_data` must be vectors of character or factor when `multiple_choice` is TRUE."), call. = FALSE)
     }
 
+    # If multichoice, check all variables only have one value, except NA
+    # Do it later
 
 
+  }
+
+  #------------------check question_varname, if grid and no multiple choice------------------
+
+  if (grid & !multiple_choice) {
+
+
+    # If grid, check question_varname must a vector of character strings
+    if (length(question_varname) <=1 || !is.character(question_varname)) {
+      stop(glue::glue("Variable `{question_varname}` must be a vector of character strings when `grid` is TRUE."), call. = FALSE)
+    }
+
+    # If grid, check all question_varname variables exist in the survey_data
+    if ( !all(question_varname %in% names(survey_data))) {
+      stop(glue::glue("Variable `{question_varname}` not found in `survey_data`."), call. = FALSE)
+    }
+
+    # If grid, check all question_varname variables in survey_data share the same class
+    check_same_type(df_survey, question_varname)
+
+  }
+
+  #------------------check question_varname, if grid and multi choice------------------
+
+  if (grid & multiple_choice) {
+    stop("Grid and multiple_choice not supported together by pollr, at the moment.", call. = FALSE)
   }
 
   #------------------check weight_varname------------------

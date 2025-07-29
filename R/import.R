@@ -3,4 +3,5 @@
 #' @importFrom forcats fct_reorder fct_rev fct_infreq as_factor fct_relevel
 #' @importFrom ggplot2 ggplot aes coord_flip labs theme_minimal facet_wrap
 #' @importFrom glue glue
+#' @importFrom purrr map map_chr
 NULL
