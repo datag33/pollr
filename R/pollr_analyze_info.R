@@ -8,11 +8,15 @@
 #'@param grid A boolean indicating whether the question is a grid question (default is FALSE)
 #' @param question_title A single character string, the title of the question (optional)
 #' @param question_text A single character string, the text of the question (optional)
-#' @param sorted_results A boolean indicating whether to sort the results
+#' @param sorted_results A boolean indicating whether to sort the results*
+#' @param top a string indicating if we display the top / top2 /top 3 results in HTLM tables. Values can be "none"(default), "top", "top2" or "top3"
+#' @param ci_level a numeric value indicating the confidence interval level (default is 0.95)
 #' @noRd
 
 pollr_analyze_info <- function(survey_data, question_varname, multiple_choice, grid,
-                               weight_varname, cross_varname , question_title, question_text, sorted_results) {
+                               weight_varname, cross_varname ,
+                               question_title, question_text,
+                               sorted_results, top, ci_level) {
 
   # Variable type, if no multiple choice and no grid
   if (!multiple_choice & !grid) {
@@ -50,6 +54,8 @@ pollr_analyze_info <- function(survey_data, question_varname, multiple_choice, g
     question_title = question_title,
     question_text = question_text,
     sorted_results   = sorted_results,
+    top = top,
+    ci_level = ci_level,
     process_date     = Sys.time()
   )
 }

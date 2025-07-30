@@ -9,7 +9,8 @@
 #' @param question_title A character string, the main title of the question (optional)
 #' @param question_text A character string, the detailled text of the question (optional)
 #' @param sorted_results A boolean indicating whether to sort the results (default is FALSE)
-#'
+#' @param top a string indicating if we display the top / top2 /top 3 results in HTLM tables. Values can be "none"(default), "top", "top2" or "top3"
+#' @param ci_level a numeric value indicating the confidence interval level (default is 0.95)
 #'
 #' @return A named list with six elements:
 #' \describe{
@@ -27,12 +28,12 @@ pollr_analyze <- function(survey_data,
                           question_varname,  multiple_choice = FALSE, grid = FALSE,
                           weight_varname = NULL, cross_varname = NULL,
                           question_title = "", question_text = "",
-                          sorted_results = FALSE) {
+                          sorted_results = FALSE, top = "none", ci_level = 0.95) {
 
 
-  check_pollr_analyze_inputs(survey_data, question_varname, multiple_choice, grid, weight_varname, cross_varname ,question_title, question_text, sorted_results)
+  check_pollr_analyze_inputs(survey_data, question_varname, multiple_choice, grid, weight_varname, cross_varname ,question_title, question_text, sorted_results, top, ci_level)
 
-  question_info <- pollr_analyze_info(survey_data, question_varname, multiple_choice, grid, weight_varname, cross_varname, question_title, question_text, sorted_results)
+  question_info <- pollr_analyze_info(survey_data, question_varname, multiple_choice, grid, weight_varname, cross_varname, question_title, question_text, sorted_results, top, ci_level)
 
 
   # Single questions (including multiple choice)
@@ -41,7 +42,7 @@ pollr_analyze <- function(survey_data,
   question_design <- pollr_analyze_design(question_data)
   question_results <- pollr_analyze_results(question_design, question_info)
   question_tab <- pollr_analyze_tab(question_results, question_info)
-  question_plot <- pollr_analyze_plot(question_results, question_info)
+  #question_plot <- pollr_analyze_plot(question_results, question_info)
   }
 
 
@@ -63,8 +64,8 @@ pollr_analyze <- function(survey_data,
     info = question_info,
     design = question_design,
     results = question_results,
-    tab = question_tab,
-    plot = question_plot
+    tab = question_tab
+    #plot = question_plot
   )
 
 

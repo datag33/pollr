@@ -9,14 +9,15 @@
 #' @param question_title A single character string, the title of the question (optional)
 #' @param question_text A single character string, the text of the question (optional)
 #' @param sorted_results A single boolean value indicating whether to sort the results (default is FALSE)
-#'
+#' @param top a string indicating if we display the top / top2 /top 3 results in HTLM tables. Values can be "none"(default), "top", "top2" or "top3"
+#' @param ci_level a numeric value indicating the confidence interval level (default is 0.95)
 #' @noRd
 
 check_pollr_analyze_inputs <- function(survey_data, question_varname,
                                        multiple_choice, grid,
                                        weight_varname, cross_varname,
                                        question_title, question_text,
-                                       sorted_results) {
+                                       sorted_results, top, ci_level) {
 
   #------------------check main arguments ------------------
 
@@ -168,5 +169,19 @@ check_pollr_analyze_inputs <- function(survey_data, question_varname,
   # Check if sorted_results is a single boolean
   if (!is.logical(sorted_results) || length(sorted_results) != 1) {
     stop("`sorted_results` must be a single boolean value", call. = FALSE)
+  }
+
+  #------------------check top ------------------
+
+  # Check if top is a single string, with specific values
+  if (!is.character(top) || length(top) > 1 || !top %in%  c("none", "top", "top2", "top3")) {
+    stop("`top` must be a single character value, with 'none', 'top', 'top2' or 'top3' as value", call. = FALSE)
+  }
+
+  #------------------check ci_level ------------------
+
+  # Check if ci_level is a single numerical value from 0 to 1
+  if (!is.numeric(ci_level) || length(ci_level) > 1 || ci_level > 1 || ci_level < 0) {
+    stop("`ci_level` must be a single numerical value between 0 and 1", call. = FALSE)
   }
 }
