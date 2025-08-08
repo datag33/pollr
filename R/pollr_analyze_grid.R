@@ -24,13 +24,14 @@ pollr_analyze_grid <- function(survey_data, question_info) {
       grid = FALSE,
       weight_varname = question_info$weight_varname,
       cross_varname = question_info$cross_varname,
-      question_title = question_info$question_title,
+      question_title = .x,
       question_text = question_info$question_text,
       sorted_results = question_info$sorted_results,
       top = question_info$top,
       ci_level = question_info$ci_level
     )
   )
+
 
   # Name the list elements using each question name
   questions_names <- question_grid_all |>
@@ -46,16 +47,19 @@ pollr_analyze_grid <- function(survey_data, question_info) {
   question_grid_design <- question_grid_data |>
     pollr_analyze_design()
 
+
   # Combine results
   question_grid_results <- question_grid_all |>
     map("results") |>
     bind_rows(.id = "questions_names")
 
-  # Combine tabs
-  question_grid_tab <- question_grid_all |>
-    map("tab")
 
-  # Combine plots
+
+  # Create new "combined" tab
+  question_grid_tab <- pollr_analyze_tab_grid_categorical(question_grid_all, question_grid_results, question_info)
+
+
+  # Create new "combined" plot
  question_grid_plot <-  pollr_analyze_plot_grid_categorical(question_grid_results, question_info)
 
  question_all <-  list(

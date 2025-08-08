@@ -44,6 +44,9 @@ pollr_analyze_info <- function(survey_data, question_varname, multiple_choice, g
   }
 
 
+  # If no title specified, use the varname as title for single question
+  if (question_title == "" & !multiple_choice & !grid) { question_title <- question_varname}
+
   list(
     question_varname = question_varname,
     multiple_choice = multiple_choice,

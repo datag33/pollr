@@ -13,7 +13,9 @@ pollr_analyze(
   cross_varname = NULL,
   question_title = "",
   question_text = "",
-  sorted_results = FALSE
+  sorted_results = FALSE,
+  top = "none",
+  ci_level = 0.95
 )
 }
 \arguments{
@@ -22,6 +24,8 @@ pollr_analyze(
 \item{question_varname}{A character string, the variable name to analyze}
 
 \item{multiple_choice}{A boolean indicating whether the question is multiple choice (default is FALSE)}
+
+\item{grid}{A boolean indicating whether the question is a grid question (default is FALSE)}
 
 \item{weight_varname}{A character string, the variable name for weights (optional)}
 
@@ -32,6 +36,10 @@ pollr_analyze(
 \item{question_text}{A character string, the detailled text of the question (optional)}
 
 \item{sorted_results}{A boolean indicating whether to sort the results (default is FALSE)}
+
+\item{top}{a string indicating if we display the top / top2 /top 3 results in HTLM tables. Values can be "none"(default), "top", "top2" or "top3"}
+
+\item{ci_level}{a numeric value indicating the confidence interval level (default is 0.95)}
 }
 \value{
 A named list with six elements:

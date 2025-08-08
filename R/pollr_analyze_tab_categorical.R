@@ -75,7 +75,7 @@ pollr_analyze_tab_categorical <- function(question_results, question_info) {
   if (question_info$top == "top2")  row_number_top <- c(nrow(question_tab_raw) - 2, nrow(question_tab_raw) - 1)
   if (question_info$top == "top3")  row_number_top <- c(nrow(question_tab_raw) - 3,  nrow(question_tab_raw)  - 2,   nrow(question_tab_raw)  - 1)
 
-  if (question_info$top %in% c("top", "top2", "top3")) {
+  if (question_info$top %in% c("top", "top2", "top3") & !question_info$grid) {
       question_tab <- question_tab |> row_spec(row_number_top, color = "white", background = "seagreen")
   }
 
@@ -89,9 +89,20 @@ pollr_analyze_tab_categorical <- function(question_results, question_info) {
     names(header_group) <- c(" ", unique(question_results$cross))
 
     question_tab <- question_tab  |>
-      add_header_above(header_group)
+      add_header_above(header_group, italic = TRUE)
   }
 
+
+  # Adding question title, if any
+
+  if (question_info$question_title != "") {
+
+    question_title <- c(length(col_names))
+    if (question_info$grid) { question_info$question_title <- paste0(question_info$question_title, " (", question_info$top, ")")} # Add top label on title if summary tab
+    names(question_title) <- question_info$question_title
+    question_tab <- question_tab  |>
+    add_header_above(question_title, color = "royalblue")
+  }
 
   return(question_tab)
 }

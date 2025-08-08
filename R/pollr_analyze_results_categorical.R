@@ -49,9 +49,10 @@ pollr_analyze_results_categorical <- function(question_design, question_info) {
 
 
 
-  # Sort the results using response factor, in ascending order
+  # Sort the results using response factor / character, in ascending order
   question_results <-  question_results |>
-    arrange(cross, response)
+    arrange(cross, response) |>
+    mutate(response = as_factor(response)) # Put in factor if response is still in character
 
 
   # If no cross variable, remove it
@@ -59,7 +60,8 @@ pollr_analyze_results_categorical <- function(question_design, question_info) {
 
   # Add top lines(s) if necessary
   if (question_info$top %in% c("top","top2", "top3")) {
-    top_results <- compute_top_n_results(question_design, question_results, ci_level = question_info$ci_level, top = "top1")
+    top_results <- compute_top_n_results(question_design, question_results, ci_level = question_info$ci_level, top = "top1") |>
+      mutate(response = "Top") # Rename Top1 to Top
      }
 
   # Add top2 lines(s) if necessary
