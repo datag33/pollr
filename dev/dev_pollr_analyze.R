@@ -7,6 +7,8 @@ library(dplyr)
 library(purrr)
 options(error = NULL)
 
+
+
 # ----------------------------Examples on single question---------------------
 
 
@@ -23,8 +25,20 @@ pollr_analyze_example1$data
 question_results <- pollr_analyze_example1$results
 pollr_analyze_example1$tab
 pollr_analyze_example1$plot
-
+pollr_analyze_example1$info
 tbl_summary(df_survey, include = A1_title) # Check gt summary
+
+
+
+    # Example 1a : single question, no weights, no cross variable, NA answers to keep
+
+    pollr_analyze(
+      survey_data = df_survey,
+      question_varname = "B2_frequency_r",
+      question_title = "R usage",
+      question_text = "How often are you using such software...?",
+      keep_na = TRUE
+    )
 
 
 # Example 2 : single question, weight variable, no cross variable
@@ -37,9 +51,6 @@ pollr_analyze_example2 <- pollr_analyze(
 
 pollr_analyze_example2$data
 pollr_analyze_example2$results
-
-
-
 pollr_analyze_example2$plot
 
 df_survey |> as_survey_design(weights = weight) |>
@@ -60,8 +71,6 @@ pollr_analyze_example3 <- pollr_analyze(
 )
 
 pollr_analyze_example3$data
-question_design <- pollr_analyze_example3$design
-
 question_results <- pollr_analyze_example3$results
 pollr_analyze_example3$tab
 pollr_analyze_example3$plot
@@ -76,13 +85,15 @@ pollr_analyze_example4 <- pollr_analyze(
   survey_data = df_survey,
   question_varname = "A1_title",
   weight_varname = "weight",
-  cross_varname = "Y1_gender",
-  sorted_results = TRUE, top = "top2"
+  cross_varname = "Y3_grade",
+  sorted_results = TRUE, top = "top2",
+  question_title = "Title",
+  question_text = "What is your title ?"
 )
 
 question_results <- pollr_analyze_example4$results
 pollr_analyze_example4$tab
-
+pollr_analyze_example4$plot
 
 
 # Example 5 : single numeric question, weight, no cross
@@ -130,15 +141,22 @@ df_survey |> as_survey_design(weights = weight) |>
 
 
 
+# ----------------------------Examples on multichoices question---------------------
+
+
+
 # Example 7 : multiple choice question, no weight, no cross
 
 survey_data <- df_survey
-question_varname <-  c("B1_using_r", "B1_using_python","B1_using_excel", "B1_using_sql")
+question_varname <-  c("B1_using_python","B1_using_r", "B1_using_powerbi", "B1_using_tableau")  #"B1_using_excel", "B1_using_sql"
+vars_to_select <- question_varname
 
 pollr_analyze_example7 <- pollr_analyze(
   survey_data = survey_data,
   multiple_choice = TRUE,
-  question_varname = question_varname)
+  question_varname = question_varname,
+  question_title = "Sofware usage",
+  question_text = "How often are you using such software...?", keep_na  =  TRUE)
 
 
 pollr_analyze_example7$data
@@ -160,21 +178,28 @@ pollr_analyze_example8 <- pollr_analyze(
   question_varname = question_varname,
   weight_varname = "weight",
   cross_varname = "Y1_gender",
-  question_title = "Sofware usage",
+  question_title = "Sofware usage by gender",
   question_text = "How often are you using such software...?",
   sorted_results = TRUE)
 
+pollr_analyze_example8$data
+pollr_analyze_example8$tab
 pollr_analyze_example8$plot
 
-# Example 9 : tableau de questions simple
 
+
+# ----------------------------Examples on grid questions ---------------------
+
+# Example 9 : tableau de questions simple
 
 question_varname1 <-  c("B2_frequency_r")
 question_varname2 <-  c("B2_frequency_python")
 question_varname3 <-  c("B2_frequency_sql")
 question_varnames <- c(question_varname1, question_varname2, question_varname3)
 
-pollr_analyze_example9 <- pollr_analyze(survey_data = df_survey,question_varname = question_varnames, grid = TRUE, top = "top2")
+pollr_analyze_example9 <- pollr_analyze(survey_data = df_survey,question_varname = question_varnames,
+                                        grid = TRUE,
+                                        question_title = "Software usages", top = "top2", keep_na = FALSE)
 pollr_analyze_example9$results
 pollr_analyze_example9$data
 pollr_analyze_example9$tab
@@ -190,7 +215,7 @@ pollr_analyze_example9$plot
 
 
 
-# Example 9 : tableau de questions, weight, cross variable
+# Example 10 : tableau de questions, weight, cross variable
 
 
 
@@ -206,6 +231,7 @@ pollr_analyze_example10$data
 pollr_analyze_example10$tab
 
 
+pollr_analyze_example10$tab$overview |>
 
 
 

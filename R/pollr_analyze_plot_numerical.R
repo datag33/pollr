@@ -1,6 +1,7 @@
 #' Generates an interactive plot for a question single question with numerical data (multiple choice or not), using survey results
 #'
 #' @param question_results tibble with question results
+#' @param question_sample_size A tibble with sample sizes data, total and cross targets if any
 #' @param question_info A list with all informations about the question
 #'
 #' @return A ggiraph object of the plot
@@ -8,7 +9,7 @@
 #' @noRd
 #'
 #'
-pollr_analyze_plot_numerical <- function(question_results, question_info) {
+pollr_analyze_plot_numerical <- function(question_results, question_sample_size, question_info) {
 
   # Prepare tooltip
   question_results <- question_results |>

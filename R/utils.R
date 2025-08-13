@@ -69,3 +69,93 @@ compute_top_n_results <- function(question_design, question_results, top, ci_lev
 }
 
 
+
+#' Interpret a p-value in terms of standard significance levels
+#'
+#' This internal function converts a numeric p-value into a human-readable
+#' description of its statistical significance level (e.g., "Significant at 95%").
+#' It uses common thresholds: 0.01, 0.05, and 0.10.
+#'
+#' @param p A numeric value between 0 and 1 representing a p-value.
+#'
+#' @return A character string describing the significance level.
+#' @noRd
+
+
+interpret_pvalue <- function(p) {
+  if (is.na(p)) {
+    return("p-value not available")
+  } else if (p < 0.01) {
+    return("Significant at 99% level")
+  } else if (p < 0.05) {
+    return("Significant at 95% level")
+  } else if (p < 0.10) {
+    return("Significant at 90% level")
+  } else {
+    return("Not statistically significant")
+  }
+}
+
+
+
+
+
+#' pollr default theme for charts
+#'
+#' A clean and legible ggplot2 theme, optimized for survey results
+#' and compatible with ggiraph outputs.
+#'
+#' @param base_size Numeric. Base font size.
+#' @param base_family Character. Base font family.
+#' @param accent_color Character. Hex or color name for accent elements.
+#'
+#' @return A ggplot2 theme object.
+#' @noRd
+
+theme_pollr <- function(base_size = 12,
+                        base_family = "sans",
+                        accent_color = "royalblue") {
+
+ theme_minimal(base_size = base_size, base_family = base_family) +
+    theme(
+
+      # Plot title & subtitle
+      plot.title = element_text(
+        face = "bold",
+        size = base_size + 6,
+        color = accent_color,
+        hjust = 0.5
+      ),
+      plot.subtitle = element_text(
+        size = base_size,
+        face = "italic",
+        color = "grey40",
+        hjust = 0.5
+      ),
+
+      # Axes
+      axis.title = element_blank(),
+      axis.text.x = element_text(color = "grey20", size = base_size - 4),
+      axis.text.y = element_text(color = "grey20", size = base_size - 2),
+      axis.line.x = element_line(color = "grey50", linewidth = 0.5),
+
+      # Grid
+      panel.grid.minor = element_blank(),
+      panel.grid.major.y = element_blank(),
+
+      # Caption
+      plot.caption = element_text(face = "italic", size = base_size - 2),
+
+      # Facet title
+      strip.text.x = element_text(size = base_size, color="darkviolet", face="bold.italic"),
+
+      # Legend
+      legend.title = element_text(face = "bold"),
+      legend.text = element_text(size = base_size - 1),
+      legend.position = "bottom",
+
+      # Margins for better HTML export
+      plot.margin = margin(10, 10, 10, 10)
+    )
+}
+

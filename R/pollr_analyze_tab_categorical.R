@@ -1,13 +1,15 @@
 #' Generate a HTML table for a single categorical question
 #'
 #' @param question_results tibble with question results
+#' @param question_sample_size A tibble with sample sizes data, total and cross targets if any
+#' @param question_test A tibble with test statistic, degrees of freedom, pvalue and significancy level
 #' @param question_info A list with all informations about the question
 #'
 #' @return A kableExtra HTML table object
-#' @importFrom kableExtra kable kbl kable_minimal kable_styling column_spec row_spec add_header_above
+#' @importFrom kableExtra kable kbl kable_minimal kable_styling column_spec row_spec add_header_above  footnote
 #' @noRd
 #'
-pollr_analyze_tab_categorical <- function(question_results, question_info) {
+pollr_analyze_tab_categorical <- function(question_results, question_sample_size, question_test, question_info) {
 
 
   question_tab_raw <- question_results |>
@@ -45,7 +47,7 @@ pollr_analyze_tab_categorical <- function(question_results, question_info) {
 
   # Add a row for total
   total_row <- question_tab_raw  |>
-    filter(!response %in% c("Top1", "Top2", "Top3")) |>
+    filter(!response %in% c("Top", "Top2", "Top3")) |>
     summarise(across(
       everything(),
       ~if (is.numeric(.x)) sum(.x, na.rm = TRUE) else "-")
@@ -90,6 +92,13 @@ pollr_analyze_tab_categorical <- function(question_results, question_info) {
 
     question_tab <- question_tab  |>
       add_header_above(header_group, italic = TRUE)
+
+
+    # Adding global test results
+    question_tab <- question_tab |>
+      footnote(glue("{question_test$significancy} (p = {question_test$p_value})"))
+
+
   }
 
 
@@ -103,6 +112,11 @@ pollr_analyze_tab_categorical <- function(question_results, question_info) {
     question_tab <- question_tab  |>
     add_header_above(question_title, color = "royalblue")
   }
+
+
+
+
+
 
   return(question_tab)
 }

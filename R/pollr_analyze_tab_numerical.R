@@ -1,13 +1,15 @@
 #' Generate a HTML table for a numerical question
 #'
 #' @param question_results tibble with question results
+#' @param question_sample_size A tibble with sample sizes data, total and cross targets if any
+#' @param question_test A tibble with test statistic, degrees of freedom, pvalue and significancy level
 #' @param question_info A list with all informations about the question
 #'
 #' @return A kableExtra HTML table object
-#' @importFrom kableExtra kable kbl kable_minimal kable_styling column_spec row_spec add_header_above
+#' @importFrom kableExtra kable kbl kable_minimal kable_styling column_spec row_spec add_header_above  footnote
 #' @noRd
 #'
-pollr_analyze_tab_numerical<- function(question_results, question_info) {
+pollr_analyze_tab_numerical<- function(question_results, question_sample_size, question_test, question_info) {
 
 
 
@@ -68,6 +70,23 @@ pollr_analyze_tab_numerical<- function(question_results, question_info) {
 
     question_tab <- question_tab  |>
     add_header_above(header_group)
+
+    # Adding global test results
+    question_tab <- question_tab |>
+      footnote(glue("{question_test$significancy} (p = {question_test$p_value})"))
+
+
+    # Adding question title, if any
+
+    if (question_info$question_title != "") {
+
+      question_title <- c(length(col_names))
+      if (question_info$grid) { question_info$question_title <- paste0(question_info$question_title, " (", question_info$top, ")")} # Add top label on title if summary tab
+      names(question_title) <- question_info$question_title
+      question_tab <- question_tab  |>
+        add_header_above(question_title, color = "royalblue")
+    }
+
   }
 
   return(question_tab)

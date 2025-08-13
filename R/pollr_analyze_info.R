@@ -16,7 +16,7 @@
 pollr_analyze_info <- function(survey_data, question_varname, multiple_choice, grid,
                                weight_varname, cross_varname ,
                                question_title, question_text,
-                               sorted_results, top, ci_level) {
+                               sorted_results, keep_na, top, ci_level) {
 
   # Variable type, if no multiple choice and no grid
   if (!multiple_choice & !grid) {
@@ -57,6 +57,7 @@ pollr_analyze_info <- function(survey_data, question_varname, multiple_choice, g
     question_title = question_title,
     question_text = question_text,
     sorted_results   = sorted_results,
+    keep_na = keep_na,
     top = top,
     ci_level = ci_level,
     process_date     = Sys.time()

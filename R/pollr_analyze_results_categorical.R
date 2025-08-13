@@ -31,6 +31,8 @@ pollr_analyze_results_categorical <- function(question_design, question_info) {
   #   pull(response) |>
   #   unique() |> as.character()
 
+
+
   # If sorted results, then reorder the response factor depending on total counts
   if (question_info$sorted_results) {
 

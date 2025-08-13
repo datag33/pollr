@@ -14,6 +14,8 @@
 
 pollr_analyze_grid <- function(survey_data, question_info) {
 
+
+
   # Apply pollr_analyze() individually to each sub-question (grid element)
   question_grid_all <- purrr::map(
     question_info$question_varname,
@@ -27,6 +29,7 @@ pollr_analyze_grid <- function(survey_data, question_info) {
       question_title = .x,
       question_text = question_info$question_text,
       sorted_results = question_info$sorted_results,
+      keep_na = question_info$keep_na,
       top = question_info$top,
       ci_level = question_info$ci_level
     )
@@ -43,6 +46,9 @@ pollr_analyze_grid <- function(survey_data, question_info) {
     map("data") |>
     bind_rows(.id = "questions_names")
 
+  # reCreate sample size (using data)
+  question_grid_sample_size <- pollr_analyze_sample_size(question_grid_data , question_info)
+
   # ReCreate design (using data)
   question_grid_design <- question_grid_data |>
     pollr_analyze_design()
@@ -54,19 +60,27 @@ pollr_analyze_grid <- function(survey_data, question_info) {
     bind_rows(.id = "questions_names")
 
 
+  # Combine tests
+  question_grid_test <- question_grid_all |>
+    map("test") |>
+    bind_rows(.id = "questions_names")
+
+
 
   # Create new "combined" tab
-  question_grid_tab <- pollr_analyze_tab_grid_categorical(question_grid_all, question_grid_results, question_info)
+  question_grid_tab <- pollr_analyze_tab_grid_categorical(question_grid_all, question_grid_results, question_grid_sample_size, question_grid_test, question_info)
 
 
   # Create new "combined" plot
  question_grid_plot <-  pollr_analyze_plot_grid_categorical(question_grid_results, question_info)
+
 
  question_all <-  list(
     data = question_grid_data,
     info = question_info,
     design = question_grid_design,
     results = question_grid_results,
+    test = question_grid_test,
     tab = question_grid_tab,
     plot = question_grid_plot
   )

@@ -14,6 +14,7 @@ pollr_analyze(
   question_title = "",
   question_text = "",
   sorted_results = FALSE,
+  keep_na = TRUE,
   top = "none",
   ci_level = 0.95
 )
@@ -36,6 +37,8 @@ pollr_analyze(
 \item{question_text}{A character string, the detailled text of the question (optional)}
 
 \item{sorted_results}{A boolean indicating whether to sort the results (default is FALSE)}
+
+\item{keep_na}{A boolean indicating wheter to keep NA answers as a specific answer (default is TRUE)}
 
 \item{top}{a string indicating if we display the top / top2 /top 3 results in HTLM tables. Values can be "none"(default), "top", "top2" or "top3"}
 

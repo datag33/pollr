@@ -9,6 +9,7 @@
 #' @param question_title A single character string, the title of the question (optional)
 #' @param question_text A single character string, the text of the question (optional)
 #' @param sorted_results A single boolean value indicating whether to sort the results (default is FALSE)
+#' @param keep_na A boolean indicating wheter to keep NA answers as a specific answer (default is TRUE)
 #' @param top a string indicating if we display the top / top2 /top 3 results in HTLM tables. Values can be "none"(default), "top", "top2" or "top3"
 #' @param ci_level a numeric value indicating the confidence interval level (default is 0.95)
 #' @noRd
@@ -17,7 +18,7 @@ check_pollr_analyze_inputs <- function(survey_data, question_varname,
                                        multiple_choice, grid,
                                        weight_varname, cross_varname,
                                        question_title, question_text,
-                                       sorted_results, top, ci_level) {
+                                       sorted_results, keep_na, top, ci_level) {
 
   #------------------check main arguments ------------------
 
@@ -170,6 +171,14 @@ check_pollr_analyze_inputs <- function(survey_data, question_varname,
   if (!is.logical(sorted_results) || length(sorted_results) != 1) {
     stop("`sorted_results` must be a single boolean value", call. = FALSE)
   }
+
+  #------------------check keep_na ------------------
+
+  # Check if keep_na is a single boolean
+  if (!is.logical(keep_na) || length(keep_na) != 1) {
+    stop("`keep_na` must be a single boolean value", call. = FALSE)
+  }
+
 
   #------------------check top ------------------
 

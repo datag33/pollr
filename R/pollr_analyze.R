@@ -9,6 +9,7 @@
 #' @param question_title A character string, the main title of the question (optional)
 #' @param question_text A character string, the detailled text of the question (optional)
 #' @param sorted_results A boolean indicating whether to sort the results (default is FALSE)
+#' @param keep_na A boolean indicating wheter to keep NA answers as a specific answer (default is TRUE)
 #' @param top a string indicating if we display the top / top2 /top 3 results in HTLM tables. Values can be "none"(default), "top", "top2" or "top3"
 #' @param ci_level a numeric value indicating the confidence interval level (default is 0.95)
 #'
@@ -28,21 +29,24 @@ pollr_analyze <- function(survey_data,
                           question_varname,  multiple_choice = FALSE, grid = FALSE,
                           weight_varname = NULL, cross_varname = NULL,
                           question_title = "", question_text = "",
-                          sorted_results = FALSE, top = "none", ci_level = 0.95) {
+                          sorted_results = FALSE, keep_na = TRUE, top = "none", ci_level = 0.95) {
 
 
-  check_pollr_analyze_inputs(survey_data, question_varname, multiple_choice, grid, weight_varname, cross_varname ,question_title, question_text, sorted_results, top, ci_level)
+  check_pollr_analyze_inputs(survey_data, question_varname, multiple_choice, grid, weight_varname, cross_varname ,question_title, question_text, sorted_results,keep_na, top, ci_level)
 
-  question_info <- pollr_analyze_info(survey_data, question_varname, multiple_choice, grid, weight_varname, cross_varname, question_title, question_text, sorted_results, top, ci_level)
+  question_info <- pollr_analyze_info(survey_data, question_varname, multiple_choice, grid, weight_varname, cross_varname, question_title, question_text, sorted_results, keep_na, top, ci_level)
 
 
   # Single questions (including multiple choice)
   if (!grid){
   question_data <- pollr_analyze_data(survey_data, question_info)
+  question_sample_size <- pollr_analyze_sample_size( question_data, question_info)
   question_design <- pollr_analyze_design(question_data)
   question_results <- pollr_analyze_results(question_design, question_info)
-  question_tab <- pollr_analyze_tab(question_results, question_info)
-  #question_plot <- pollr_analyze_plot(question_results, question_info)
+  if (!is.null(question_info$cross_varname)) question_test <- pollr_analyze_test(question_design, question_info)    # No test if no cross variable
+  else question_test <- NA
+  question_tab <- pollr_analyze_tab(question_results, question_sample_size, question_test, question_info)
+  question_plot <- pollr_analyze_plot(question_results, question_sample_size, question_info)
   }
 
 
@@ -51,8 +55,11 @@ pollr_analyze <- function(survey_data,
 
     question_grid_all <- pollr_analyze_grid(survey_data, question_info)
     question_data <- question_grid_all$data
+
     question_design <- question_grid_all$design
     question_results <- question_grid_all$results
+    if (!is.null(question_info$cross_varname)) question_test <- question_grid_all$test
+    else question_test <- NA
     question_tab <- question_grid_all$tab
     question_plot <- question_grid_all$plot
   }
@@ -62,10 +69,12 @@ pollr_analyze <- function(survey_data,
   question_all <- list(
     data = question_data,
     info = question_info,
+    sample_size = question_sample_size,
     design = question_design,
     results = question_results,
-    tab = question_tab
-    #plot = question_plot
+    test = question_test,
+    tab = question_tab,
+    plot = question_plot
   )
 
 
